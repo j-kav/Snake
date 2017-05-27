@@ -40,7 +40,7 @@ SnakeNode.prototype.headStep = function () {
         this.setY(this.scene.pixelSize * Math.round(this.scene.mousePosition.y / this.scene.pixelSize));
     }
 
-    return !this.positionEqualsTo(this.lastPosition);
+    return this.positionEqualsTo(this.lastPosition);
 };
 
 SnakeNode.prototype.moveNext = function (node) {
@@ -63,6 +63,7 @@ SnakeNode.prototype.positionEqualsTo = function (pos) {
 SnakeNode.prototype.createNodeElement = function (x, y) {
 
     this.element = document.createElement('div');
+    this.element.classList.add('node');
     this.element.style.backgroundColor = 'brown';
     this.element.style.width = this.element.style.height = this.scene.pixelSize + 'px';
     this.element.style.position = 'absolute';

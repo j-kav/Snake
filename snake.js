@@ -2,7 +2,8 @@ function Snake(scene) {
     this.frame = null;
     this.scene = scene;
     this.head = null;
-    this.speed = 1200;
+    this.speed = 600;
+    this.speedIncreaseLevel = 1.3;
     this.nodes = [];
     this.stepLevel = 0;
     this.nodeLevel = 0;
@@ -92,7 +93,7 @@ Snake.prototype.init = function () {
 
 Snake.prototype.move = function () {
 
-    if (this.isOverlapped()) {
+    if (this.isOverlapped() || this.isHitSelf()) {
         this.stopMove();
         this.scene.stopGame();
         return false;
@@ -100,21 +101,25 @@ Snake.prototype.move = function () {
 
     var positionChanged = this.head.headStep();
 
-    if (!positionChanged) return false;
+    if (positionChanged) return false;
 
     if (this.isIntersected()) {
         this.scene.increaseScore(1.2);
         this.addSnakeNode();
 
-        this.speed /= 1.2;
+        this.speed /= this.speedIncreaseLevel;
         this.scene.target.shufflePosition();
         this.resume();
     }
 
-
     this.moveNodes();
     if (this.stepLevel > 1000) {
         this.scene.increaseScore(1);
+        this.speedIncreaseLevel = 1.05;
+    }
+
+    if (this.stepLevel > 300 && this.stepLevel < 1000) {
+        this.speedIncreaseLevel = 1.2;
     }
 
     this.stepLevel++;
@@ -140,6 +145,20 @@ Snake.prototype.isOverlapped = function () {
     return isOverlapped;
 };
 
+Snake.prototype.isHitSelf = function () {
+    var isHitSelf = false;
+
+
+    this.nodes.forEach(function(node){
+        if(this.head.positionEqualsTo(node.position)){
+            isHitSelf = true;
+        }
+    }.bind(this));
+
+    return isHitSelf;
+};
+
+
 Snake.prototype.isIntersected = function () {
     var intersected = false;
 
@@ -151,7 +170,12 @@ Snake.prototype.isIntersected = function () {
 
 
 Snake.prototype.stopMove = function () {
-    clearInterval(this.frame);
+
+    if(this.scene.debug){
+        cancelAnimationFrame(this.frame);
+    } else {
+        clearInterval(this.frame);
+    }
     return this;
 };
 
@@ -165,7 +189,7 @@ Snake.prototype.startMove = function () {
     if (this.scene.debug) {
         this.frame = requestAnimationFrame(this.step.bind(this));
     } else {
-        this.frame = setInterval(this.move.bind(this), this.speed * 0.8);
+        this.frame = setInterval(this.move.bind(this), this.speed);
     }
 
     return this;

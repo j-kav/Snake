@@ -86,14 +86,14 @@ SnakeScene.prototype.stopGame = function () {
 
 SnakeScene.prototype.initScene = function () {
     this.container.style.width = this.container.style.height = this.originalSquareSize + 'px';
-    this.container.style.backgroundColor = 'green';
+    this.container.style.backgroundColor = '#99CC99';
     this.container.style.position = 'relative';
     return this;
 };
 
 
 SnakeScene.prototype.start = function () {
-    document.getElementById('bestScore').innerText = +localStorage.bestscore | 0;
+    document.getElementById('bestScore').innerText = (+localStorage.bestscore | 0).toString();
     this.initScene()
         .initListeners();
     this.target = new Target(this).init();

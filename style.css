@@ -1,0 +1,58 @@
+* {
+    box-sizing: border-box;
+}
+
+div#target {
+    position: relative;
+}
+
+div#target:after,
+div#target:before {
+    position: absolute;
+    display: block;
+    content: "";
+    box-sizing: border-box;
+}
+
+div#target:after {
+    height: 4px;
+    top: 3px;
+    border-right: 4px solid black;
+    border-left: 4px solid black;
+    width: 100%;
+}
+
+div#target:before {
+    height: 100%;
+    border-top: 4px solid black;
+    border-bottom: 4px solid black;
+    width: 4px;
+    left: 3px;
+}
+
+.snake-scene .node {
+    border: 1px solid transparent;
+
+}
+
+.snake-scene {
+    border: 1px solid black;
+}
+
+.snake-scene-wrapper {
+    padding: 30px;
+    background-color: #99cc99;
+    float: left;
+}
+
+.dashboard h2 {
+    margin-top: 10px;
+}
+
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}

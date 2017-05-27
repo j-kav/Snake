@@ -14,7 +14,6 @@ Target.prototype.init = function () {
 Target.prototype.getTargetElement = function () {
     var target = document.createElement('div');
     target.setAttribute('id', 'target');
-    target.style.backgroundColor = 'red';
     target.style.width = target.style.height = this.scene.pixelSize + 'px';
     target.style.position = 'absolute';
 

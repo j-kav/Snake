@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Snake</title>
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
-<div id="sceneWrapper">
-    <div id="scene"></div>
-    <div id="dashboard">
-        <h2>Score: <span id="score"></span></h2>
-        <h2>Best score: <span id="bestScore"></span></h2>
+<div id="sceneWrapper" class="snake-scene-wrapper">
+    <div id="scene" class="snake-scene"></div>
+    <div id="dashboard" class="dashboard">
+        <div class="pull-left"><h2>Score: <span id="score">0</span></h2></div>
+        <div class="pull-right"><h2>Best score: <span id="bestScore"></span></h2></div>
+
+
     </div>
 </div>
 <script src="target.js"></script>
