@@ -1,156 +1,58 @@
-function Snake(scene) {
-    this.frame = null;
-    this.scene = scene;
+function Snake(pixelSize) {
     this.head = null;
-    this.speed = 600;
-    this.speedIncreaseLevel = 1.3;
     this.nodes = [];
     this.stepLevel = 0;
-    this.nodeLevel = 0;
+    this.pixelSize = pixelSize;
 }
 
 Snake.prototype.moveNodes = function () {
     if (this.nodes.length > 0) {
-        this.nodes[this.nodeLevel].moveNext(this.head);
+        this.head.moveNext();
     }
 };
 
-Snake.prototype.addSnakeNode = function () {
+Snake.prototype.getNextNodePosition = function () {
+    var x, y, ps = this.pixelSize;
 
-    var x, y, ps = this.scene.pixelSize;
-
-    if (this.head.direction === 'bottom') {
+    if (this.head.position.direction === 'bottom') {
         x = this.head.lastPosition.x;
         y = this.head.lastPosition.y - ps;
-    }
-
-    if (this.head.direction === 'top') {
+    } else if (this.head.position.direction === 'top') {
         x = this.head.lastPosition.x;
         y = this.head.lastPosition.y + ps;
-    }
-
-    if (this.head.direction === 'left') {
+    } else if (this.head.position.direction === 'left') {
         x = this.head.lastPosition.x + ps;
         y = this.head.lastPosition.y;
-    }
-
-    if (this.head.direction === 'right') {
+    } else if (this.head.position.direction === 'right') {
         x = this.head.lastPosition.x - ps;
         y = this.head.lastPosition.y;
     }
 
-    var node = new SnakeNode(this.scene).createNodeElement().toScene();
+    return {x: x, y: y};
+};
 
-    node.setX(x).setY(y);
+Snake.prototype.addNode = function (node) {
+    var position = this.getNextNodePosition();
+
+    node.setX(position.x).setY(position.y);
     node.index = this.nodes.length;
-    this.nodes.push(node);
 
-    return this;
-};
-
-Snake.prototype.initListeners = function () {
-    document.addEventListener('keydown', function (event) {
-
-        switch (event.keyCode) {
-            case 40:
-                this.head.direction = 'bottom';
-                break;
-            case 38:
-                this.head.direction = 'top';
-                break;
-            case 37:
-                this.head.direction = 'left';
-                break;
-            case 39:
-                this.head.direction = 'right';
-                break;
-        }
-
-        if (event.keyCode === 27) {
-            if (this.scene.hasPlaying) {
-                this.stopMove();
-            } else {
-                this.startMove();
-            }
-            this.scene.hasPlaying = !this.scene.hasPlaying;
-        }
-
-
-    }.bind(this));
-
-    return this;
-};
-
-Snake.prototype.init = function () {
-
-    this.head = new SnakeNode(this.scene)
-        .createNodeElement(this.scene.getCenterByX(), 0)
-        .toScene();
-
-    this.head.element.style.backgroundColor = 'black';
-    return this;
-};
-
-Snake.prototype.move = function () {
-
-    if (this.isOverlapped() || this.isHitSelf()) {
-        this.stopMove();
-        this.scene.stopGame();
-        return false;
+    if (node.index >= 1) {
+        this.nodes[node.index - 1].next = node;
+        node.prev = this.nodes[node.index - 1];
+    } else if (node.index === 0) {
+        this.head.next = node;
+        node.prev = this.head;
     }
 
-    var positionChanged = this.head.headStep();
-
-    if (positionChanged) return false;
-
-    if (this.isIntersected()) {
-        this.scene.increaseScore(1.2);
-        this.addSnakeNode();
-
-        this.speed /= this.speedIncreaseLevel;
-        this.scene.target.shufflePosition();
-        this.resume();
-    }
-
-    this.moveNodes();
-    if (this.stepLevel > 1000) {
-        this.scene.increaseScore(1);
-        this.speedIncreaseLevel = 1.05;
-    }
-
-    if (this.stepLevel > 300 && this.stepLevel < 1000) {
-        this.speedIncreaseLevel = 1.2;
-    }
-
-    this.stepLevel++;
-
-    return true;
-};
-
-
-Snake.prototype.resume = function () {
-    this.stopMove();
-    this.startMove();
-};
-
-Snake.prototype.isOverlapped = function () {
-    var isOverlapped = false;
-    if (this.head.position.x < 0 || this.head.position.x > this.scene.squareSize) {
-        isOverlapped = true;
-    }
-    if (this.head.position.y < 0 || this.head.position.y > this.scene.squareSize) {
-        isOverlapped = true;
-    }
-
-    return isOverlapped;
+    this.nodes.push(node)
 };
 
 Snake.prototype.isHitSelf = function () {
     var isHitSelf = false;
 
-
-    this.nodes.forEach(function(node){
-        if(this.head.positionEqualsTo(node.position)){
+    this.nodes.forEach(function (node) {
+        if (this.head.positionEqualsTo(node.position.x, node.position.y)) {
             isHitSelf = true;
         }
     }.bind(this));
@@ -158,39 +60,7 @@ Snake.prototype.isHitSelf = function () {
     return isHitSelf;
 };
 
-
-Snake.prototype.isIntersected = function () {
-    var intersected = false;
-
-    if (this.scene.target.position.x === this.head.position.x && this.scene.target.position.y === this.head.position.y) {
-        intersected = true;
-    }
-    return intersected;
-};
-
-
-Snake.prototype.stopMove = function () {
-
-    if(this.scene.debug){
-        cancelAnimationFrame(this.frame);
-    } else {
-        clearInterval(this.frame);
-    }
-    return this;
-};
-
-Snake.prototype.step = function () {
-    this.move();
-    requestAnimationFrame(this.step.bind(this))
-};
-
-Snake.prototype.startMove = function () {
-
-    if (this.scene.debug) {
-        this.frame = requestAnimationFrame(this.step.bind(this));
-    } else {
-        this.frame = setInterval(this.move.bind(this), this.speed);
-    }
-
-    return this;
+Snake.prototype.setDirection = function (direction) {
+    this.head.lastPosition.direction = this.head.position.direction;
+    this.head.position.direction = direction;
 };

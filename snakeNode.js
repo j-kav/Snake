@@ -1,91 +1,88 @@
-function SnakeNode(scene) {
-    this.scene = scene;
+function SnakeNode(pixelSize) {
     this.element = null;
     this.index = 0;
-
-    IHavePosition.call(this, SnakeNode);
+    this.pixelSize = pixelSize;
+    this.next = null;
+    this.prev = null;
+    SnakeNodePosition.call(this);
 }
 
-SnakeNode.prototype.headStep = function () {
+SnakeNode.prototype = {
+    bottom: function () {
+        this.setY(this.position.y + this.pixelSize);
+    },
+    top: function () {
+        this.setY(this.position.y - this.pixelSize);
+    },
+    right: function () {
+        this.setX(this.position.x + this.pixelSize);
+    },
+    left: function () {
+        this.setX(this.position.x - this.pixelSize);
+    }
+};
 
+SnakeNode.prototype.headMouseStep = function (x, y, direction) {
+    this.position.direction = direction;
     this.lastPosition = {
         x: this.position.x,
         y: this.position.y
     };
 
-    if (!this.scene.debug) {
-        if (this.direction === 'bottom') {
-            this.position.y += this.scene.pixelSize;
-            this.element.style.top = this.position.y + 'px';
-        }
-
-        if (this.direction === 'left') {
-            this.position.x -= this.scene.pixelSize;
-            this.element.style.left = this.position.x + 'px';
-        }
-
-        if (this.direction === 'right') {
-            this.position.x += this.scene.pixelSize;
-            this.element.style.left = this.position.x + 'px';
-        }
-
-        if (this.direction === 'top') {
-            this.position.y -= this.scene.pixelSize;
-            this.element.style.top = this.position.y + 'px';
-        }
-
-    } else {
-        this.direction = this.scene.mousePosition.direction;
-        this.setX(this.scene.pixelSize * Math.round(this.scene.mousePosition.x / this.scene.pixelSize));
-        this.setY(this.scene.pixelSize * Math.round(this.scene.mousePosition.y / this.scene.pixelSize));
-    }
+    this.setX(x);
+    this.setY(y);
 
     return this.positionEqualsTo(this.lastPosition);
 };
 
-SnakeNode.prototype.moveNext = function (node) {
+SnakeNode.prototype.headStep = function (direction) {
+    this.lastPosition.direction = direction;
+    this.lastPosition = {
+        x: this.position.x,
+        y: this.position.y
+    };
 
-    this.setX(node.lastPosition.x);
-    this.setY(node.lastPosition.y);
+    this[direction]();
+    return this.positionEqualsTo(this.lastPosition);
+};
 
-    var next = this.scene.snake.nodes[this.index + 1];
-    if (next) {
-        next.moveNext(this);
+SnakeNode.prototype.moveNext = function () {
+    if (this.prev) {
+        this.setX(this.prev.lastPosition.x);
+        this.setY(this.prev.lastPosition.y);
     }
-
+    if (this.next) {
+        this.next.moveNext();
+    }
 };
 
-SnakeNode.prototype.positionEqualsTo = function (pos) {
-    return (this.position.x === pos.x && this.position.y === pos.y);
+SnakeNode.prototype.positionEqualsTo = function (x, y) {
+    return (this.position.x === x && this.position.y === y);
 };
 
 
-SnakeNode.prototype.createNodeElement = function (x, y) {
+SnakeNode.prototype.getNodeElement = function () {
 
     this.element = document.createElement('div');
     this.element.classList.add('node');
     this.element.style.backgroundColor = 'brown';
-    this.element.style.width = this.element.style.height = this.scene.pixelSize + 'px';
+    this.element.style.width = this.element.style.height = this.pixelSize + 'px';
     this.element.style.position = 'absolute';
-    this.element.style.left = x + 'px';
-    this.element.style.top = y + 'px';
 
-    this.position.x = x;
-    this.position.y = y;
-
-    return this;
+    return this.element;
 };
 
 
-SnakeNode.prototype.toScene = function () {
-    this.scene.container.appendChild(this.element);
-    return this;
+SnakeNode.prototype.isIntersected = function (x, y) {
+    var intersected = false;
+    if (x === this.position.x && y === this.position.y) {
+        intersected = true;
+    }
+    return intersected;
 };
-
 
 SnakeNode.prototype.setX = function (x) {
     this.lastPosition.x = this.position.x;
-
     this.position.x = x;
     this.element.style.left = x + 'px';
     return this;
