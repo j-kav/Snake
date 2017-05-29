@@ -154,8 +154,8 @@ SnakeScene.prototype.initScene = function () {
 SnakeScene.prototype.initTarget = function () {
     var target = new Target(this.pixelSize);
     this.target = target;
-    target.setPosition(this.getRandomPosition(), this.getRandomPosition());
     this.add(target.getTargetElement());
+    target.setPosition(this.getRandomPosition(), this.getRandomPosition());
 };
 
 SnakeScene.prototype.initSnake = function () {
@@ -170,9 +170,7 @@ SnakeScene.prototype.initSnake = function () {
 };
 
 SnakeScene.prototype.shuffleTargetPosition = function () {
-    var element = document.getElementById('target');
     this.target.setPosition(this.getRandomPosition(), this.getRandomPosition());
-    this.container.replaceChild(this.target.getTargetElement(), element);
 };
 
 SnakeScene.prototype.isOverlapped = function (x, y) {
