@@ -44,8 +44,6 @@ function SnakeScene(options) {
 
     this.squareSize = this.pixelSize * 50;
     this.originalSquareSize = (this.squareSize + this.pixelSize);
-    this.mouseMoveHandler = this.directionHandler;
-    this.snakeHandler = this.snakeDirectionHandler;
 
 }
 
@@ -109,13 +107,13 @@ SnakeScene.prototype.directionHandler = function (event) {
 };
 
 SnakeScene.prototype.initListeners = function () {
-    this.container.addEventListener('mousemove', this.mouseMoveHandler.bind(this));
-    document.addEventListener('keydown', this.snakeHandler.bind(this));
+    this.container.addEventListener('mousemove', this.directionHandler.bind(this));
+    document.addEventListener('keydown', this.snakeDirectionHandler.bind(this));
 };
 
 SnakeScene.prototype.removeListeners = function () {
-    this.container.removeEventListener('mousemove', this.mouseMoveHandler.bind(this));
-    document.removeEventListener('keydown', this.snakeHandler.bind(this));
+    this.container.removeEventListener('mousemove', this.directionHandler.bind(this));
+    document.removeEventListener('keydown', this.snakeDirectionHandler.bind(this));
 };
 
 SnakeScene.prototype.increaseScore = function (factor) {
