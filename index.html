@@ -4,18 +4,28 @@
     <meta charset="UTF-8">
     <title>Snake</title>
     <link href="style.css" rel="stylesheet">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 
-<div id="sceneWrapper" class="snake-scene-wrapper">
-    <div id="scene" class="snake-scene"></div>
-    <div id="dashboard" class="dashboard">
-        <div class="pull-left"><h2>Score: <span id="score">0</span></h2></div>
-        <div class="pull-right"><h2>Best score: <span id="bestScore"></span></h2></div>
-
-
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 col-md-offset-2">
+            <div id="sceneWrapper" class="snake-scene-wrapper">
+                <div id="scene" class="snake-scene"></div>
+                <div id="dashboard" class="dashboard">
+                    <div class="pull-left"><h2>Score: <span id="score">0</span></h2></div>
+                    <div class="pull-right"><h2>Best score: <span id="bestScore"></span></h2></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+
 <script src="target.js"></script>
 <script src="snakeNode.js"></script>
 <script src="snake.js"></script>
